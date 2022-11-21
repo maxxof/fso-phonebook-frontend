@@ -114,17 +114,17 @@ const App = () => {
       setNewNumber('')
     }
 
-    const succesfulAdd = name => {
+    const succesfulAdd = text => {
       setSucceeded(true)
-      setSuccessMessage(`Added ${name}`)
+      setSuccessMessage(text)
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
     }
 
-    const unsuccesfulAdd = name => {
+    const unsuccesfulAdd = text => {
       setSucceeded(false)
-      setSuccessMessage(`Information of ${name} has already been removed from server`)
+      setSuccessMessage(text)
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
@@ -139,7 +139,7 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
           clearInput()
-          succesfulAdd(person.name)
+          succesfulAdd(`Added ${person.name}`)
         })
         .catch(error => {
           personService
@@ -148,7 +148,7 @@ const App = () => {
               setPersons(refreshedPersons)
             })
           clearInput()
-          unsuccesfulAdd(person.name)
+          unsuccesfulAdd(`Information of ${person.name} has already been removed from server`)
         })
 
     } else if (!/\S/.test(newName) === false && nameExists === false) {
@@ -162,7 +162,10 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           clearInput()
-          succesfulAdd(returnedPerson.name)
+          succesfulAdd(`Added ${returnedPerson.name}`)
+        })
+        .catch(err => {
+          unsuccesfulAdd(err.response.data.error)
         })
     }
   }
